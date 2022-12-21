@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\BarangModel;
 use App\Models\TransaksiModel;
 use App\Models\UserModel;
+use App\Models\DiskonModel;
 use App\Libraries\Mypdf;
 
 class Transaksi extends BaseController

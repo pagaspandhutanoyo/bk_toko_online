@@ -70,6 +70,7 @@ $uri = service('uri');
                     <li <?= ($uri->getSegment(1) == 'contact') ? 'class="active"' : '' ?>><a href="<?= site_url('contact') ?>">Contact</a></li>
                     <?php if ($session->get('isLoggedIn')) : ?>
                         <li <?= ($uri->getSegment(1) == 'transaction') ? 'class="active"' : '' ?>><a href="<?= site_url('transaction') ?>">Transaction</a></li>
+                        <li <?= ($uri->getSegment(1) == 'voucher') ? 'class="active"' : '' ?>><a href="<?= site_url('voucher') ?>">Voucher</a></li>
                     <?php endif ?>
                 </ul>
             </nav>

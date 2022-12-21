@@ -26,6 +26,12 @@ $jumlah = [
     'max' => $barang->stok,
     'class' => 'form-control',
 ];
+$kode_voucher = [
+    'name' => 'kode_voucher',
+    'id' => 'kode_voucher',
+    'value' => null,
+    'class' => 'form-control',
+];
 $total_harga = [
     'name' => 'total_harga',
     'id' => 'total_harga',
@@ -36,6 +42,13 @@ $total_harga = [
 $ongkir = [
     'name' => 'ongkir',
     'id' => 'ongkir',
+    'value' => null,
+    'readonly' => true,
+    'class' => 'form-control',
+];
+$diskon = [
+    'name' => 'diskon',
+    'id' => 'diskon',
     'value' => null,
     'readonly' => true,
     'class' => 'form-control',
@@ -207,10 +220,10 @@ $submit = [
                         </div>
                         <div class="product-thumbs">
                             <div class="product-thumbs-track ps-slider owl-carousel">
-                                <div class="pt active" data-imgbigurl="<?= base_url('public/uploads/' . $barang->gambar . '') ?>"><img src="<?= base_url('uploads/' . $barang->gambar . '') ?>" alt=""></div>
-                                <div class="pt" data-imgbigurl="<?= base_url('public/uploads/' . $barang->gambar . '') ?>"><img src="<?= base_url('uploads/' . $barang->gambar . '') ?>" alt=""></div>
-                                <div class="pt" data-imgbigurl="<?= base_url('public/uploads/' . $barang->gambar . '') ?>"><img src="<?= base_url('uploads/' . $barang->gambar . '') ?>" alt=""></div>
-                                <div class="pt" data-imgbigurl="<?= base_url('public/uploads/' . $barang->gambar . '') ?>"><img src="<?= base_url('uploads/' . $barang->gambar . '') ?>" alt=""></div>
+                                <div class="pt active" data-imgbigurl="<?= base_url('public/uploads/' . $barang->gambar . '') ?>"><img src="<?= base_url('public/uploads/' . $barang->gambar . '') ?>" alt=""></div>
+                                <div class="pt" data-imgbigurl="<?= base_url('public/uploads/' . $barang->gambar . '') ?>"><img src="<?= base_url('public/uploads/' . $barang->gambar . '') ?>" alt=""></div>
+                                <div class="pt" data-imgbigurl="<?= base_url('public/uploads/' . $barang->gambar . '') ?>"><img src="<?= base_url('public/uploads/' . $barang->gambar . '') ?>" alt=""></div>
+                                <div class="pt" data-imgbigurl="<?= base_url('public/uploads/' . $barang->gambar . '') ?>"><img src="<?= base_url('public/uploads/' . $barang->gambar . '') ?>" alt=""></div>
                             </div>
                         </div>
                     </div>
@@ -256,6 +269,12 @@ $submit = [
                                         </select>
                                     </div>
 
+                                    <div class="form-group">
+                                        <label for="kode_voucher">Kode Voucher</label>
+                                        <input type="text" class="form-control" id="kode_voucher">
+                                        <p id="erorKode"></p>
+                                    </div>
+
                                     <strong>Estimasi : <span id="estimasi"></span></strong>
                                     <hr>
                                     <?= form_open('buy') ?>
@@ -268,6 +287,10 @@ $submit = [
                                     <div class="form-group">
                                         <?= form_label('Ongkir', 'ongkir') ?>
                                         <?= form_input($ongkir) ?>
+                                    </div>
+                                    <div class="form-group">
+                                        <?= form_label('Diskon', 'diskon') ?>
+                                        <?= form_input($diskon) ?>
                                     </div>
                                     <div class="form-group">
                                         <?= form_label('Total Harga', 'total_harga') ?>
@@ -344,6 +367,7 @@ $submit = [
         var jumlah_pembelian = 1;
         var harga = <?= $barang->harga ?>;
         var ongkir = 0;
+        var potongan = 0;
         $("#provinsi").on('change', function() {
             $("#kabupaten").empty();
             var id_province = $(this).val();
@@ -401,14 +425,46 @@ $submit = [
             ongkir = parseInt($(this).val());
             $("#ongkir").val(ongkir);
             $("#estimasi").html(estimasi + " Hari");
-            var total_harga = (jumlah_pembelian * harga) + ongkir;
+            var total_harga = (jumlah_pembelian * (harga - potongan)) + ongkir;
             $("#total_harga").val(total_harga);
         });
 
         $("#jumlah").on("change", function() {
             jumlah_pembelian = $("#jumlah").val();
-            var total_harga = (jumlah_pembelian * harga) + ongkir;
+            var total_harga = (jumlah_pembelian * (harga - potongan)) + ongkir;
             $("#total_harga").val(total_harga);
+        });
+
+        $("#diskon").on("change", function() {
+            potongan = $("#diskon").val();
+
+        });
+
+        $("#kode_voucher").on('input', function() {
+            $('#erorKode').html('');
+            potongan = 0;
+            $("#diskon").val(potongan);
+            var kode_voucher = $("#kode_voucher").val();
+            $.ajax({
+                url: "<?= site_url('voucher/getdiskon') ?>",
+                type: 'GET',
+                data: {
+                    'kode_voucher': kode_voucher,
+                },
+                dataType: 'json',
+                success: function(data) {
+                    if (!data) {
+                        $('#erorKode').html('Tidak ditemukan');
+                    } else {
+                        console.log(data);
+                        var diskon = data["besar_diskon"] / 100;
+                        potongan = harga * diskon;
+                        $("#diskon").val(potongan);
+                        var total_harga = (jumlah_pembelian * (harga - potongan)) + ongkir;
+                        $("#total_harga").val(total_harga);
+                    }
+                },
+            });
         });
     });
 </script>

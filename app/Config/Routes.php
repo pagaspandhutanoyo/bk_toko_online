@@ -52,6 +52,9 @@ $routes->get('invoice/(:segment)', 'Transaksi::invoice', ['filter' => 'auth']);
 $routes->add('buy', 'Transaksi::buy', ['filter' => 'auth']);
 $routes->add('komentar/create', 'Komentar::create');
 $routes->add('contact', 'Home::contact');
+$routes->get('voucher', 'Diskon::index');
+$routes->get('voucher/getdiskon', 'Diskon::getdiskon');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing

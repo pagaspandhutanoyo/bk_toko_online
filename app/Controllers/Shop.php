@@ -46,7 +46,7 @@ class Shop extends BaseController
     public function product()
     {
         $id = $this->request->uri->getSegment(3);
-
+        // $diskon = $this->diskon->findAll();
         $barang = $this->barang->find($id);
         $kategori = $this->kategori->findAll();
         $komentar = $this->komentar->select('komentar.*, user.username')->where('id_barang', $id)->join('user', 'komentar.id_user=user.id')->findAll();
