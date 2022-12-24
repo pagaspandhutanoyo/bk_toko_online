@@ -10,8 +10,8 @@ class DiskonModel extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = [
         'kode_voucher',
-        'tanggal_mulai',
-        'tanggal_akhir',
+        'tanggal_mulai_berlaku',
+        'tanggal_akhir_berlaku',
         'besar_diskon',
         'aktif'
     ];
